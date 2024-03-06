@@ -16,8 +16,20 @@ struct func {
   func(int& i) : _i(i) {}
   void operator()() {
     for (int i = 0; i < 3; i++) {
-      _i = 1;
-      std::cout << "_i is " << _i << std::endl;
+      _i = i;
+      std::cout << "---[func] _i is " << _i << std::endl;
+      std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+  }
+};
+
+struct func_sp {  // smart pointer
+  std::shared_ptr<int> _sp;
+  func_sp(std::shared_ptr<int> sp) : _sp(sp) {}
+  void operator()() {
+    for (int i = 0; i < 3; i++) {
+      *_sp = i;
+      std::cout << "---[func_sp] _sp is " << *_sp << std::endl;
       std::this_thread::sleep_for(std::chrono::seconds(1));
     }
   }
@@ -29,10 +41,93 @@ void oops() {
   std::thread functhread(myfunc);
   /*
   这里将线程`functhread`分离(独立于主线程运行),这里有一个隐患!
-  线程函数`myfunc`(即其仿函数)内部的`_i`是`someLocalState`的引用,且`_i = 1`会修改,所以线程函数一直会
-  用到`someLocalState`,但是当`oops`执行完后局部变量`someLocalState`会被回收,导致意外发生.
+  线程函数`myfunc`(即其仿函数)内部的`_i`是`someLocalState`的引用,且`_i=1`会修改,所以
+  线程函数一直会用到`someLocalState`,但是当`oops`执行完后局部变量`someLocalState`会
+  被回收,导致意外发生.
   */
   functhread.detach();
+}
+
+void oops_sp() {
+  auto someLocalState = std::make_shared<int>(0);
+  func_sp myfunc(someLocalState);
+  std::thread functhread(myfunc);
+  functhread.detach();
+}
+
+void oops_usejoin() {
+  int someLocalState = 0;
+  func myfunc(someLocalState);
+  std::thread functhread(myfunc);
+  /*
+  这里将原本detach的线程改为join,让主线程等待子线程结束.
+  */
+  functhread.join();
+}
+
+/*
+异常捕获(try/catch),来防止主线程崩溃导致子线程也崩溃.
+*/
+void catch_exception() {
+  int someLocalState = 0;
+  func myfunc(someLocalState);
+  std::thread functhread{myfunc};
+  try {
+    // 本线程做一些事情,可能引发崩溃
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+  } catch (std::exception& e) {
+    functhread.join();
+    throw;
+  }
+}
+
+/*
+线程守卫.避免用try/catch的臃肿方式.
+使用RAII技术,用于管理`std::thread`对象生命周期,
+保证线程对象析构的时候等待线程运行结束再回收资源.
+*/
+class thread_guard {
+ private:
+  std::thread& _t;
+
+ public:
+  explicit thread_guard(std::thread& t) : _t(t) {}
+  ~thread_guard() {
+    if (_t.joinable()) {
+      _t.join();
+    }
+  }
+};
+
+void auto_guard() {
+  int someLocalState = 0;
+  func myfunc(someLocalState);
+  std::thread t1(myfunc);
+  /*
+  将t1线程作为参数传递给类对象`tg`
+  当`auto_guard`函数执行完后会回收局部对象`tg`,此时触发`thread_guard`的析构,析构内会判断`t1`线程是否
+  可`join`,如果可以则等待其执行完毕.以起到防止资源泄露的作用.
+  */
+  thread_guard tg(t1);
+  //...本线程做一些事情
+  /*
+  主线程会先执行下面这段输出,随后依然有子线程的输出`_i is
+  ..`输出,代表成功守卫了子线程,让主线程 等待(join)子线程结束后才回收资源.
+  */
+  /*
+  因为这里对象是创建在堆区上的,所以"先创建后析构",所以这里`t1`不会出现比`tg`先执行析构的场景,所以
+  不用担心`t1`线程先执行完后执行析构.
+  */
+  std::cout << "=== auto_guard function has finished " << std::endl;
+}
+
+void oops_danger(int som_param) {
+  char buffer[1024];
+  sprintf(buffer, "%i", som_param);
+  // 在线程内部将char const* 转化为std::string
+  std::thread t(print_str, 3, buffer);
+  t.detach();
+  std::cout << "danger oops finished " << std::endl;
 }
 
 // void move_oops() {
@@ -79,13 +174,27 @@ int main() {
 
   /* 4.lambda表达式作为线程函数 */
   std::thread t3(
-      [](std::string str) { std::cout << "--- str is" << str << std::endl; },
+      [](std::string str) { std::cout << "--- str is " << str << std::endl; },
       helloStr);
   t3.join();
 
   /* 5.detach的注意事项 */
-  oops();
-  std::this_thread::sleep_for(std::chrono::seconds(1));
+  // oops();
+  // std::this_thread::sleep_for(std::chrono::seconds(1));
+
+  // 方法一:使用智能指针包装变量(有问题,先搁置 ???)
+  // oops_sp();
+
+  /* 6.join用法 */
+  oops_usejoin();
+
+  /* 7.try/catch 捕获异常 */
+  // catch_exception();
+
+  /* 8.自动守卫 */
+  auto_guard();
+
+  /* 9.慎用隐式转换 */
 
   return 0;
 }
