@@ -121,25 +121,78 @@ void auto_guard() {
   std::cout << "=== auto_guard function has finished " << std::endl;
 }
 
+/* 慎用隐式转换 */
+void print_str(int i, const std::string& s) {
+  std::cout << "--- i is " << i << " str is " << std::endl;
+}
+
 void oops_danger(int som_param) {
   char buffer[1024];
   sprintf(buffer, "%i", som_param);
   // 在线程内部将char const* 转化为std::string
-  std::thread t(print_str, 3, buffer);
+  std::thread t(print_str, 3, buffer);  // 3和buffer是`print_str`的实参
   t.detach();
   std::cout << "danger oops finished " << std::endl;
 }
 
-// void move_oops() {
-//   auto p = std::make_unique<int>(100);
-//   std::thread t(deal_unique, std::move(p));
-//   t.join();
-// }
+/* 绑定引用 */
+void change_param(int& param) { param++; }
+
+void oops_ref(int someParam) {
+  std::cout << "--- before change, param is: " << someParam << std::endl;
+  /*
+  需要显式引用转换:`std::ref()`
+  因为`change_param`接收一个"左值引用"但传入的是一个"右值".
+  `std::thread`的构造函数在处理参数时,会进行参数的复制,而不是引用.(具体看源码,目前看不懂
+  ???)
+  */
+  // std::thread t2(change_param, someParam);  //错误
+  std::thread t2(change_param, std::ref(someParam));
+  t2.join();
+  std::cout << "--- after change, param is: " << someParam << std::endl;
+}
+
+/* 绑定类成员函数 */
+class X {
+ public:
+  void do_lengthy_work() { std::cout << "--- do lengthy work" << std::endl; }
+};
+
+void oops_bind_classfunc() {
+  X myX;
+  std::thread t(&X::do_lengthy_work, &myX);
+  // 如果`do_lengthy_work`有参数:
+  // std::thread t(&X::do_lengthy_work, &myX, [param1],...);
+  t.join();
+}
+
+/* 线程函数参数是unique类型 */
+void deal_unique(std::unique_ptr<int> p) {
+  std::cout << "--- unique ptr is: " << *p << std::endl;
+  (*p)++;
+  std::cout << "--- after unique ptr is: " << *p << std::endl;
+}
+
+void oops_move() {
+  auto p = std::make_unique<int>(100);
+  /*
+  `std::thread`会对传入的参数进行"拷贝"或"移动",所以当传入`std::unique_ptr
+  p`时,`p`会被拷贝到 内部线程中,又因`unique_ptr`不可拷贝,所以会出错.
+  这时必须要用`std::move`标记进行移动操作.
+  */
+  std::thread t(deal_unique, std::move(p));
+  t.join();
+  //`move`后不能再使用`p`了,已被`move`废弃(无法输出了p了)
+  std::cout << "after unique data is " << *p << std::endl;
+}
 
 int main() {
   std::string helloStr = "hello world!";
   /* 1.通过()创建一个线程`t1`,并初始化线程函数 */
-  std::thread t1(thread_work_1, helloStr);
+  std::thread t10(thread_work_1, helloStr);
+  std::thread t11(
+      &thread_work_1,
+      helloStr);  // 普通函数前面加不加`&`都行,因为函数名会退化为地址
   /*
   试图让主线程睡眠来等待是无效的,因为线程有默认优化:
   当主线程结束时,就会调用子线程的析构函数,析构函数内部会调用`terminate`函数,这会触发`assert`断言导致崩溃.
@@ -147,7 +200,8 @@ int main() {
   // std::this_thread::sleep_for(std::chrono::seconds(1));  //睡眠1s
 
   /* 2.使用`join()`让主线程等待子线程结束 */
-  t1.join();
+  t10.join();
+  t11.join();
 
   /* 3.仿函数作为线程函数 */
   /*
@@ -182,7 +236,7 @@ int main() {
   // oops();
   // std::this_thread::sleep_for(std::chrono::seconds(1));
 
-  // 方法一:使用智能指针包装变量(有问题,先搁置 ???)
+  // 方法一:使用智能指针包装变量(没生效还是有问题,先搁置 ???)
   // oops_sp();
 
   /* 6.join用法 */
@@ -194,7 +248,17 @@ int main() {
   /* 8.自动守卫 */
   auto_guard();
 
-  /* 9.慎用隐式转换 */
+  /* 9.慎用隐式转换 (没听懂,先搁置 ???) */
+  // oops_danger();
+
+  /* 10.绑定引用 */
+  oops_ref(10);
+
+  /* 11.线程绑定类的成员函数 */
+  oops_bind_classfunc();
+
+  /* 12.线程函数参数是unique类型 */
+  oops_move();
 
   return 0;
 }
