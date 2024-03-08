@@ -1,1 +1,5 @@
 add_executable(test_21 test_21.cpp)
+add_executable(test_22 test_22.cpp)
+add_executable(test_23 test_23.cpp)
+add_executable(test_24 test_24.cpp)
+add_executable(test_25 test_25.cpp)

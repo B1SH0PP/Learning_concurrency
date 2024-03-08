@@ -56,7 +56,7 @@ std::thread g() {
 }
 
 int main() {
-  /* 线程归属权 */
+  /* 1.线程归属权 */
   // dangerous_use();
 
   /* 返回一个线程 */

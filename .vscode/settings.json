@@ -45,7 +45,12 @@
         "xstddef": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp",
-        "xthread": "cpp"
+        "xthread": "cpp",
+        "algorithm": "cpp",
+        "numeric": "cpp",
+        "mutex": "cpp",
+        "deque": "cpp",
+        "stack": "cpp"
     },
     "cmake.configureOnOpen": true
 }

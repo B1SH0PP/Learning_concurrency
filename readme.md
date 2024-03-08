@@ -1,11 +1,19 @@
-# *v24.03.07-2236*
+# *v24.03.08-2246*
 
+1. 看到了:
+
+   [C++ 并发编程(3) 互斥和死锁_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1AN4y1o78q/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3) 0:26:00
+
+# *v24.03.08-1643*
+
+1. 看完了第二节,开始第三节.
+
+# *v24.03.07-2236*
 1. 看到了 *joining_thread*
 
    [C++ 并发编程(2) 线程所属权管理_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1v8411R7hD/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3) 0:24:09
 
 # *v24.03.07-1937*
-
 1. 将`main.cpp`中的知识点拆分出来了.
 2. 第一节看完.
 3. `test_4`, `test_6`, `test_7` 都有看不懂的; ???
@@ -43,7 +51,6 @@
 
 
 # *v24.03.05-2238*
-
 看到了 *detach的隐患*
 
 [C++ 并发编程(1) 线程基础，为什么线程参数默认传参方式是值拷贝？_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1FP411x73X/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3) 0:25:08
