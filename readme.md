@@ -1,3 +1,9 @@
+# *v24.03.10-2242*
+
+1. 看到:
+
+   [C++ 并发编程(3) 互斥和死锁_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1AN4y1o78q/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3) 1:10:31
+
 # *v24.03.08-2246*
 
 1. 看到了:
