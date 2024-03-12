@@ -1,3 +1,12 @@
+# *v24.03.12-2238*
+1. 看到了:
+   [C++ 并发编程(4) unique_lock,共享锁以及递归锁_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1wz4y1T7fN/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3) 37:08
+   对应`test_36.cpp`;
+
+# *v24.03.12-0905*
+1. `test_34.cpp`是比较重要的知识点;
+2. `test_34.cpp`最后`4.层级锁`太抽象没看完, 以后用到再回顾;
+
 # *v24.03.11-2247*
 
 1. 看到了C++17的`std::scoped_lock`

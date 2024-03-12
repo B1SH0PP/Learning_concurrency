@@ -2,7 +2,7 @@
 #include <mutex>
 #include <stack>
 
-/* 同时加锁:如果想在一个函数内对2个互斥量同时加锁,并且避免死锁 */
+/* 1.同时加锁:如果想在一个函数内对2个互斥量同时加锁,并且避免死锁 */
 std::mutex mtx1;
 std::mutex mtx2;
 int m_1 = 0;
@@ -83,7 +83,7 @@ void danger_swap(bigObject_manager& objm1, bigObject_manager& objm2) {
 void test_danger_swap() {
   bigObject_manager objm1(5);
   bigObject_manager objm2(100);
-  objm1.printinfo();
+  objm1.printinfo();  // 打印交换前
   objm2.printinfo();
 
   /*
@@ -96,7 +96,7 @@ void test_danger_swap() {
   t1.join();
   t2.join();
 
-  objm1.printinfo();
+  objm1.printinfo();  // 打印交换后
   objm2.printinfo();
 }
 
@@ -105,9 +105,12 @@ void safe_swap(bigObject_manager& objm1, bigObject_manager& objm2) {
   if (&objm1 == &objm2) {
     return;
   }
-  // 一次上2个锁,有一个加不上都无法继续
+  //一次上2个锁,有一个加不上都无法继续
   std::lock(objm1._mtx, objm2._mtx);
-  // 使用"领养锁"管理互斥锁的释放 (只管释放,不管上锁,故名领养锁)
+  /*
+  使用"领养锁"管理互斥锁的释放 (只管释放,不管上锁,故名领养锁)
+  在使用领养锁`std::adopt_lock`之前必须上锁,因为作用域结束后会强制解锁,没锁上则会崩溃 !
+  */
   std::lock_guard<std::mutex> lk_gd_1(objm1._mtx, std::adopt_lock);
   std::this_thread::sleep_for(std::chrono::seconds(1));  // 为了导致死锁,先睡一会儿
   std::lock_guard<std::mutex> lk_gd_2(objm2._mtx, std::adopt_lock);
@@ -118,7 +121,7 @@ void safe_swap(bigObject_manager& objm1, bigObject_manager& objm2) {
 void test_safe_swap() {
   bigObject_manager objm1(5);
   bigObject_manager objm2(100);
-  objm1.printinfo();
+  objm1.printinfo();  // 打印交换前
   objm2.printinfo();
 
   std::thread t1(safe_swap, std::ref(objm1), std::ref(objm2));  // 引用`std::ref`传入
@@ -126,20 +129,18 @@ void test_safe_swap() {
   t1.join();
   t2.join();
 
-  objm1.printinfo();
+  objm1.printinfo();  // 打印交换后
   objm2.printinfo();
 }
 
-/* 扩展:使用C++17新增的`scoped_lock`方式,同时管理多把锁 */
+/* 2.扩展:使用C++17新增的`scoped_lock`方式,同时管理多把锁 */
 void safe_swap_scope(bigObject_manager& objm1, bigObject_manager& objm2) {
   std::cout << "thread [" << std::this_thread::get_id() << "] begin" << std::endl;
   if (&objm1 == &objm2) {
     return;
   }
 
-  /*
-  使用`scoped_lock`管理多个互斥锁的上锁和解锁,相当于升级版的`lock_guard`
-  */
+  // 使用`scoped_lock`管理多个互斥锁的上锁和解锁,相当于升级版的`lock_guard`
   std::scoped_lock sl(objm1._mtx, objm2._mtx);
   swap(objm1._obj, objm2._obj);
   std::cout << "thread [" << std::this_thread::get_id() << "] end" << std::endl;
@@ -148,7 +149,7 @@ void safe_swap_scope(bigObject_manager& objm1, bigObject_manager& objm2) {
 void test_safe_swap_scope() {
   bigObject_manager objm1(5);
   bigObject_manager objm2(100);
-  objm1.printinfo();
+  objm1.printinfo();  // 打印交换前
   objm2.printinfo();
 
   std::thread t1(safe_swap_scope, std::ref(objm1), std::ref(objm2));  // 引用`std::ref`传入
@@ -156,9 +157,60 @@ void test_safe_swap_scope() {
   t1.join();
   t2.join();
 
-  objm1.printinfo();
+  objm1.printinfo();  // 打印交换后
   objm2.printinfo();
 }
+
+/* 3.层级锁:不同时上2把锁但也能保证安全性 */
+class hierarchical_mutex {
+ public:
+  explicit hierarchical_mutex(unsigned long value) : _hierarchy_value(value),
+                                                     _previous_hierarchy_value(0) {}
+
+  /*
+  因为锁是不支持拷贝和移动的,所以这里这里直接删除拷贝构造和拷贝赋值
+  知识点:因为我们没有定义移动构造/赋值,且移动操作是不会系统提供的,默认是走拷贝,而我们又删除了拷贝操作,
+        所以此时已不再支持拷贝和移动.
+  */
+  hierarchical_mutex(const hierarchical_mutex&) = delete;
+  hierarchical_mutex& operator=(const hierarchical_mutex&) = delete;
+
+  void lock() {
+    // 检查加锁的层级值是否满足加锁条件
+    check_for_hierarchy_violation();
+    _internal_mutex.lock();
+  }
+
+  void unlock() {
+    // 判断是否是同一把锁
+    if (_this_thread_hierarchy_value != _hierarchy_value) {
+      throw std::logic_error("mutex hierarchy violated !");
+    }
+    _this_thread_hierarchy_value = _previous_hierarchy_value;
+    _internal_mutex.unlock();
+  }
+
+ private:
+  std::mutex _internal_mutex;
+  // 当前层级值
+  unsigned long const _hierarchy_value;
+  // 上一级层级值
+  unsigned long _previous_hierarchy_value;
+  // 本线程层级值
+  static thread_local unsigned long _this_thread_hierarchy_value;
+
+ private:
+  void check_for_hierarchy_violation() {
+    if (_this_thread_hierarchy_value <= _hierarchy_value)
+      // 判断当前线程锁的层级是否小于等于要加的锁的层级
+      throw std::logic_error("mutex hierarchy violated !");
+  }
+
+  void update_hierarchy_value() {
+    _previous_hierarchy_value = _this_thread_hierarchy_value;
+    _this_thread_hierarchy_value = _hierarchy_value;
+  }
+};
 
 int main() {
   /* 4.同时加锁 */
@@ -170,6 +222,8 @@ int main() {
 
   // 3.使用C++17的`scoped_lock`
   test_safe_swap_scope();
+
+  // 4.层级锁(没看完,以后用到再说 ???)
 
   /* `拷贝构造/赋值` 和 `移动构造/赋值` */
   // bigObject obj1(100);

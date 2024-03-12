@@ -50,7 +50,11 @@
         "numeric": "cpp",
         "mutex": "cpp",
         "deque": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "shared_mutex": "cpp",
+        "condition_variable": "cpp",
+        "map": "cpp",
+        "xtree": "cpp"
     },
     "cmake.configureOnOpen": true
 }
