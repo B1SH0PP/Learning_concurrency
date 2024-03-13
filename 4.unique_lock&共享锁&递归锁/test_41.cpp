@@ -154,7 +154,7 @@ void precison_lock() {
 }
 
 int main() {
-  /* 5.unique_lock */
+  /* 1.unique_lock */
   // use_unique_lock();
   // use_owns_lock();
   // use_owns_lock_and_defer_lock();

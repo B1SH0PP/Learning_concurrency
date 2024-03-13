@@ -1,4 +1,14 @@
+# *v24.03.13-2234*
+
+1. 看到了:
+
+   [C++ 并发编程(6) 利用条件变量实现线程安全队列_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1934y1N7Nb/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3) 
+   对应`test_61.cpp`; 13:09
+
+2. 文件结构改了下, 跟视频课对应;
+
 # *v24.03.12-2238*
+
 1. 看到了:
    [C++ 并发编程(4) unique_lock,共享锁以及递归锁_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1wz4y1T7fN/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3) 37:08
    对应`test_36.cpp`;

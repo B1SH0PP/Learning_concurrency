@@ -108,7 +108,7 @@ void safe_swap(bigObject_manager& objm1, bigObject_manager& objm2) {
   //一次上2个锁,有一个加不上都无法继续
   std::lock(objm1._mtx, objm2._mtx);
   /*
-  使用"领养锁"管理互斥锁的释放 (只管释放,不管上锁,故名领养锁)
+  使用"领养锁"管理互斥量的释放 (只管释放,不管上锁,故名领养锁)
   在使用领养锁`std::adopt_lock`之前必须上锁,因为作用域结束后会强制解锁,没锁上则会崩溃 !
   */
   std::lock_guard<std::mutex> lk_gd_1(objm1._mtx, std::adopt_lock);
@@ -140,7 +140,7 @@ void safe_swap_scope(bigObject_manager& objm1, bigObject_manager& objm2) {
     return;
   }
 
-  // 使用`scoped_lock`管理多个互斥锁的上锁和解锁,相当于升级版的`lock_guard`
+  // 使用`scoped_lock`管理多个互斥量的上锁和解锁,相当于升级版的`lock_guard`
   std::scoped_lock sl(objm1._mtx, objm2._mtx);
   swap(objm1._obj, objm2._obj);
   std::cout << "thread [" << std::this_thread::get_id() << "] end" << std::endl;

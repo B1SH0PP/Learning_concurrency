@@ -1,0 +1,5 @@
+# set(CMAKE_CXX_STANDARD 17)  # 全部使用C++17标准
+add_executable(test_41 test_41.cpp)
+add_executable(test_42 test_42.cpp)
+target_compile_features(test_42 PRIVATE cxx_std_17)  # 指定`test_42`使用C++17,其余默认
+add_executable(test_43 test_43.cpp)

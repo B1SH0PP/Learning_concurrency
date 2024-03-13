@@ -10,6 +10,7 @@ class X {
 
 void oops_bind_classfunc() {
   X myX;
+  // 需要传入:成员函数地址和对象地址
   std::thread t(&X::do_lengthy_work, &myX);
   // 如果`do_lengthy_work`有参数:
   // std::thread t(&X::do_lengthy_work, &myX, [param1],...);
