@@ -54,7 +54,8 @@
         "shared_mutex": "cpp",
         "condition_variable": "cpp",
         "map": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "queue": "cpp"
     },
     "cmake.configureOnOpen": true
 }
