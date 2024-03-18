@@ -55,7 +55,14 @@
         "condition_variable": "cpp",
         "map": "cpp",
         "xtree": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "future": "cpp",
+        "atomic": "cpp",
+        "xxatomic": "cpp"
     },
-    "cmake.configureOnOpen": true
+    "cmake.configureOnOpen": true,
+    "editor.tokenColorCustomizations": {
+        "comments": "",
+        "textMateRules": []
+    }
 }

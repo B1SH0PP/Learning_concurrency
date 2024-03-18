@@ -5,7 +5,9 @@
 /* 绑定类成员函数 */
 class X {
  public:
-  void do_lengthy_work() { std::cout << "--- do lengthy work" << std::endl; }
+  void do_lengthy_work() {
+    std::cout << "--- do lengthy work" << std::endl;
+  }
 };
 
 void oops_bind_classfunc() {

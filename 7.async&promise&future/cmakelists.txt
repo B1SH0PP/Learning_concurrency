@@ -1,0 +1,7 @@
+add_executable(test_71 test_71.cpp)
+add_executable(test_72 test_72.cpp)
+add_executable(test_73 test_73.cpp)
+add_executable(test_74 test_74.cpp)
+add_executable(test_75 test_75.cpp)
+add_executable(test_76 test_76.hpp test_76.cpp)
+

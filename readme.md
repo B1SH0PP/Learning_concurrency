@@ -1,10 +1,15 @@
+# *v24.03.18-2111*
+1. 正好看完了: [并发三剑客async,promise和future](https://www.bilibili.com/video/BV18w411i74T/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3)
+
+2. `test_76`是 **线程池** 的demo, 特别重要, 值得多次调试研究;
+
+   ![image-20240318211554650](readme.assets/image-20240318211554650.png)
+
 # *v24.03.14-2123*
 
 1. 看到了:
 
-   35:03
-
-
+   [并发三剑客async,promise和future](https://www.bilibili.com/video/BV18w411i74T/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3) 35:03
 
 # *v24.03.13-2234*
 

@@ -12,9 +12,12 @@ void deal_unique(std::unique_ptr<int> p) {
 void oops_move() {
   auto p = std::make_unique<int>(100);
   /*
-  `std::thread`会对传入的参数进行"拷贝"或"移动",所以当传入`std::unique_ptr
-  p`时,`p`会被拷贝到 内部线程中,又因`unique_ptr`不可拷贝,所以会出错.
+  `std::thread`会对传入的参数进行"拷贝"或"移动",所以当传入`std::unique_ptr p`时,`p`会被拷贝到
+  内部线程中,又因`unique_ptr`不可拷贝,所以会出错.
   这时必须要用`std::move`标记进行移动操作.
+
+  好像在`std::thread`函数中传入线程函数实参时,如果直接传入都默认使用拷贝操作,所以在后续章节中,不
+  支持拷贝操作的基本都是使用的`std::move`操作.
   */
   std::thread t(deal_unique, std::move(p));
   t.join();

@@ -11,7 +11,7 @@ void param_function(int a) {
 }
 
 /*
-当我们想将线程对象插入vec容器时,不能用`push_back`其底层会调用拷贝或移动构造,所以应使用`emplace_back`它只
+当我们想将线程对象插入vec容器时,不能用`push_back`因其底层会调用拷贝或移动构造,所以应使用`emplace_back`它只
 会调用构造函数.
 */
 void use_vector() {
