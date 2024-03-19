@@ -1,3 +1,8 @@
+# *v24.03.19-1703*
+1. 看到了: https://www.bilibili.com/video/BV158411y7Bn/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3 1:04:12
+2. CSP设计模式感觉不太会调试;
+
+
 # *v24.03.18-2111*
 1. 正好看完了: [并发三剑客async,promise和future](https://www.bilibili.com/video/BV18w411i74T/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3)
 

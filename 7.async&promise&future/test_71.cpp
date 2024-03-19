@@ -4,6 +4,13 @@
 #include <string>
 
 /* async的用法 */
+/*
+`std::async`相较`std::thread`的好处:
+1.`async`会返回一个`std::future`对象,所以可以获取异步任务的返回值;`std::thread`无返回值;
+2.`std::async`有调用策略;
+3.可以捕获异常;
+*/
+
 // 定义一个异步任务
 std::string fetchDataFromDB(std::string query) {
   // 模拟异步任务,从数据库取数据

@@ -68,7 +68,7 @@ void reasonableImplemention() {
       num--;
       std::cout << "--- thread B print 2" << std::endl;
       /*
-      唤醒`cvA`之后其会再次执行谓词`num == 1`,发现满足条件返回`true`,即可加锁并往下执行.
+      唤醒`cvA`之后其会再次判断谓词`num == 1`,发现满足条件返回`true`,即可加锁并往下执行.
       */
       cvA.notify_one();
       // 唤醒所有等待cvA条件变量的线程(此处我们只有一个线程`thread_A`中使用了`cvA`,所以没必要)
