@@ -121,6 +121,8 @@ class threadsafe_stack_safe {
   @que2:32位,当`T`是`vec`等大数据量的容器,用`return`返回后临时变量`element`与外部接收的变量会发生
         一次拷贝,若内存已满,则会发生`element`数据丢失.
         64位可以交换内存,基本不会发生.
+        (! 这里有点问题,返回临时变量在C++11之后优先是使用"移动"操作了(返回值优化(Return Value Optimization)),
+        所以这里也许举的例子不恰当,先搁置吧 ???)
   @slt:用智能指针封装.
   */
   std::shared_ptr<T> pop_sp() {

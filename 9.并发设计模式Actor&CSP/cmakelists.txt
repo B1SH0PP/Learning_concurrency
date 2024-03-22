@@ -1,2 +1,3 @@
 add_executable(test_91 test_91.hpp test_91.cpp)
+add_executable(test_92 test_92.cpp)
 

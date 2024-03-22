@@ -7,6 +7,7 @@
 /*
 CSP(Communicating Sequential Process),通信顺序进程
 */
+
 template <typename T>
 class Channel {
  private:

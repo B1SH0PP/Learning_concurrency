@@ -1,3 +1,10 @@
+# *v24.03.22-1047*
+1. 回家同步一次.
+
+2. 看到了:
+
+   [C++ 并发编程(11) 原子操作和内存模型_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1m84y1d7rS/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3) 1:33:08
+
 # *v24.03.19-1703*
 1. 看到了: https://www.bilibili.com/video/BV158411y7Bn/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3 1:04:12
 2. CSP设计模式感觉不太会调试;
