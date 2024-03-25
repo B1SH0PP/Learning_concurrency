@@ -127,8 +127,8 @@ class ThreadPool {
  private:
   std::mutex cv_mtx_;
   std::condition_variable cv_lock_;
-  std::atomic_bool stop_;
-  std::atomic_int thread_num_;
+  std::atomic_bool stop_;       //`std::atomic<bool>`的别名
+  std::atomic_int thread_num_;  //`std::atomic<int>`的别名
   std::queue<Task> tasks_;
   std::vector<std::thread> pool_;
 };

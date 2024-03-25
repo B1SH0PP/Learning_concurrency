@@ -1,3 +1,12 @@
+# *v24.03.25-2241*
+1. `test_112.cpp`: 宽松内存模型 (*Relaxed ordering*)
+
+2. `test_113.cpp`: 全局顺序一致模型 (*Sequencial consistent ordering*)
+
+3. `test_114.cpp`: 获取发行模型 (*Acquire-release ordering*)
+
+4. 看到了: [C++ 并发编程(12) 利用内存顺序实现内存模型_哔哩哔哩_bilibili](https://www.bilibili.com/video/BV1Cc411Z7cn/?spm_id_from=333.788&vd_source=a8a38358873e306ffdd6017aaab418e3) 0:40:47
+
 # *v24.03.22-1047*
 1. 回家同步一次.
 
