@@ -1,3 +1,20 @@
+# *v24.03.26*
+1. 11章结束
+
+2. `test_115.cpp`: 关于用内存模型改进单例,没看完,以后用到再说
+   [通过内存顺序实现内存模型 · 恋恋风辰的编程笔记 (llfc.club)](https://gitbookcpp.llfc.club/sections/cpp/concurrent/concpp12.html)
+
+3. `test_114.cpp`: 第3点的`release-sequence`不是太清晰, 后面再说
+
+   ![image-20240326130524859](readme.assets/image-20240326130524859.png)
+
+   ![image-20240326130539947](readme.assets/image-20240326130539947.png)
+
+4. 12章学了一部分, 更新到`test_121.cpp`, 后来去弄`TensorRT`部署`EfficientAD`模型了, 所以搁置了一段时间, 也没有 *github* 同步.
+   所以今天 (五一假期前夕) *24.04.27-0055* 抽空整理了之前在笔记本上最后的学习进度, 将没上传的内容更新到 *github*, 方便后续用台式机继续学习.
+
+   后面要不要继续拾起这个多线程开发的课程全看心情随缘了.
+
 # *v24.03.25-2241*
 1. `test_112.cpp`: 宽松内存模型 (*Relaxed ordering*)
 
